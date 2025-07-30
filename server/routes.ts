@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const errorText = await response.text();
         console.error('Auth server error:', errorText);
         return res.status(response.status).json({ 
-          error: `Server responded with ${response.status}: ${errorText}` 
+          error: `Auth server error: ${errorText}` 
         });
       }
       

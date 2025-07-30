@@ -116,6 +116,7 @@ export default function Signer() {
 
       // Publish to auth server
       addActivity('sign', 'Publishing to auth.nostrich.pro...', 'info');
+      console.log('About to publish event:', JSON.stringify(signedEvent, null, 2));
       await publishEvent(signedEvent);
       
       showStatus('success', 'Event signed successfully! Authentication completed and sent to auth.nostrich.pro');
@@ -284,6 +285,7 @@ export default function Signer() {
               variant="outline"
               onClick={() => {
                 const testUri = "nostr+walletconnect://?challengeId=test123&relay=wss%3A//relay.damus.io&secret=abc456";
+                console.log('Testing with URI:', testUri);
                 handleQRCodeDetected(testUri);
               }}
               className="w-full"
