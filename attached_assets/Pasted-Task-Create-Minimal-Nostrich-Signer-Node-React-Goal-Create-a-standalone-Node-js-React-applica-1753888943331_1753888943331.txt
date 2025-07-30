@@ -1,0 +1,96 @@
+Task: Create Minimal Nostrich Signer (Node + React)
+Goal
+Create a standalone Node.js + React application that functions as a Nostr signer, communicating with the existing Nostrich authentication server at auth.nostrich.pro.
+
+Technical Requirements
+Architecture:
+
+Node.js backend with Express (minimal, just serves the React app)
+React frontend with TypeScript
+Vite for build tooling
+Tailwind CSS for styling
+Core Functionality:
+
+QR Code Scanning - Camera-based scanning using jsQR
+Private Key Management - Generate/import/export Nostr keys (stored in localStorage)
+Event Signing - Sign Nostr events locally in browser
+Server Communication - Send signed events to auth server
+Server Integration
+The signer must call the existing server endpoint:
+
+POST https://auth.nostrich.pro/api/publish-event
+Request Format:
+
+// Signed Nostr event object
+{
+  kind: 1,
+  created_at: 1234567890,
+  tags: [
+    ["challenge", "challengeId"],
+    ["nwc", "secret"], 
+    ["relay", "relay"]
+  ],
+  content: "Signed login response",
+  pubkey: "userPublicKey",
+  id: "eventId",
+  sig: "signature"
+}
+Implementation Details
+QR Code Format Expected:
+
+nostr+walletconnect://?challengeId=abc123&relay=wss%3A//relay.damus.io&secret=def456
+Key Dependencies:
+
+nostr-tools - for Nostr event signing
+jsqr - for QR code scanning
+@noble/hashes - for crypto utilities
+react + typescript + vite
+tailwindcss - for styling
+File Structure:
+
+signer/
+├── server/
+│   └── index.js          # Minimal Express server
+├── src/
+│   ├── components/       # React components
+│   ├── pages/
+│   │   └── Signer.tsx   # Main signer page
+│   ├── App.tsx
+│   └── main.tsx
+├── package.json
+└── vite.config.ts
+Key Features to Implement
+Camera QR Scanning
+Request camera permission
+Continuous QR code detection
+Parse NWC URI format
+Key Management
+Auto-generate keys on first visit
+Import existing keys (hex/nsec format)
+Export keys for backup
+Store in localStorage
+Event Signing & Publishing
+Create Nostr event with challenge data
+Sign with local private key using finalizeEvent()
+POST to https://auth.nostrich.pro/api/publish-event
+Handle success/error responses
+Minimal UI
+Clean, mobile-first design
+Camera view for scanning
+Key management dialog
+Status messages and error handling
+Important Notes
+Security: All cryptographic operations happen in browser
+No backend logic: Server only serves static files
+HTTPS required: Camera access needs secure context
+Mobile optimized: Primary use case is mobile scanning
+Error handling: Clear error messages for failed scans/publishes
+Success Criteria
+Camera opens and scans QR codes successfully
+Can parse NWC URIs from auth.nostrich.pro
+Signs events and publishes to auth server
+Challenge generators receive WebSocket notifications
+Works on mobile browsers with camera access
+Create this as a completely separate project that can be deployed to any hosting platform (Vercel, Netlify, etc.) and communicate with the existing auth.nostrich.pro server.
+
+Keep it minimal - focus only on the core signer functionality without extra features.
