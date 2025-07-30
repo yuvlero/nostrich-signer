@@ -70,44 +70,27 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
   const startCamera = useCallback(async () => {
     try {
       setStatus('Requesting camera permission...');
-      setHasPermission(null); // Reset permission state
       
-      // Try more permissive constraints first
-      let constraints: MediaStreamConstraints = {
+      const constraints: MediaStreamConstraints = {
         video: {
-          facingMode: 'environment'
+          facingMode: 'environment',
+          width: { ideal: 640 },
+          height: { ideal: 480 }
         }
       };
 
-      let stream: MediaStream;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-      } catch (backCameraError) {
-        console.log('Back camera failed, trying any camera:', backCameraError);
-        // Fallback to any available camera
-        constraints = { video: true };
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-      }
-      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
-      console.log('Camera stream obtained:', stream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        
-        // Wait for video to be ready
-        const playPromise = videoRef.current.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-        }
-        console.log('Video playing successfully');
+        await videoRef.current.play();
       }
 
       // Check for flash support
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
       setFlashSupported('torch' in capabilities);
-      console.log('Track capabilities:', capabilities);
       
       setHasPermission(true);
       onScanningChange(true);
@@ -119,7 +102,7 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
     } catch (error) {
       console.error('Camera error:', error);
       setHasPermission(false);
-      setStatus(`Camera error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setStatus('Camera permission denied');
       onScanningChange(false);
     }
   }, [onScanningChange, scanFrame]);
@@ -168,22 +151,33 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
           </p>
         </div>
 
-        {/* Camera View - Only show when scanning */}
-        {isScanning && (
-          <div className="relative bg-gray-900 aspect-square mx-4 mb-4 rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              playsInline
-              muted
-            />
-            <canvas
-              ref={canvasRef}
-              className="hidden"
-            />
-            
-            {/* QR Scanner Overlay */}
+        {/* Camera View */}
+        <div className="relative bg-gray-900 aspect-square mx-4 mb-4 rounded-lg overflow-hidden">
+          <video
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            playsInline
+            muted
+            style={{ display: isScanning ? 'block' : 'none' }}
+          />
+          <canvas
+            ref={canvasRef}
+            className="hidden"
+          />
+          
+          {!isScanning && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <Camera className="text-gray-400 h-12 w-12 mb-3 mx-auto" />
+                <p className="text-gray-400 text-sm">Camera not active</p>
+                <p className="text-gray-500 text-xs mt-1">Tap start to begin scanning</p>
+              </div>
+            </div>
+          )}
+          
+          {/* QR Scanner Overlay */}
+          {isScanning && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-48 h-48 border-2 border-white rounded-lg relative">
                 {/* Corner indicators */}
@@ -196,19 +190,19 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary animate-pulse"></div>
               </div>
             </div>
+          )}
 
-            {/* Permission denied overlay */}
-            {hasPermission === false && (
-              <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center">
-                <div className="text-center text-white p-6">
-                  <Camera className="h-8 w-8 mb-3 mx-auto" />
-                  <p className="font-medium mb-2">Camera Permission Required</p>
-                  <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
-                </div>
+          {/* Permission denied overlay */}
+          {hasPermission === false && (
+            <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center">
+              <div className="text-center text-white p-6">
+                <Camera className="h-8 w-8 mb-3 mx-auto" />
+                <p className="font-medium mb-2">Camera Permission Required</p>
+                <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Scanner Controls */}
         <div className="p-6 pt-0">
