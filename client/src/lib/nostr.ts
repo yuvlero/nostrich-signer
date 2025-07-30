@@ -118,9 +118,9 @@ export function createAndSignEvent(
 
 export async function publishEvent(event: NostrEvent): Promise<boolean> {
   try {
-    console.log('Publishing event to auth.nostrich.pro...', event);
+    console.log('Publishing event via proxy...', event);
     
-    const response = await fetch('https://auth.nostrich.pro/api/publish-event', {
+    const response = await fetch('/api/publish-event', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -129,22 +129,21 @@ export async function publishEvent(event: NostrEvent): Promise<boolean> {
       body: JSON.stringify(event)
     });
     
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    console.log('Proxy response status:', response.status);
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Server error response:', errorText);
-      throw new Error(`Server responded with ${response.status}: ${errorText}`);
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      console.error('Proxy error response:', errorData);
+      throw new Error(errorData.error || `Proxy responded with ${response.status}`);
     }
     
-    const responseData = await response.text();
+    const responseData = await response.json();
     console.log('Success response:', responseData);
     
     return true;
   } catch (error) {
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Network error: Unable to connect to auth.nostrich.pro. Check your internet connection.');
+      throw new Error('Network error: Unable to connect to the proxy server. Check your connection.');
     }
     console.error('Failed to publish event:', error);
     throw error;

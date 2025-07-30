@@ -1,0 +1,64 @@
+[Error] Warning: Encountered two children with the same key, `1753889577273`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+div
+div
+main
+div
+Signer@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/src/pages/Signer.tsx:32:35
+Route@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js:323:14
+Switch@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js:380:27
+Router
+TooltipProviderProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MV53PHM7.js:48:13
+TooltipProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js:2213:43
+QueryClientProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js:2805:9
+App
+	printWarning (chunk-RPCDYKBN.js:521)
+	error (chunk-RPCDYKBN.js:505)
+	warnOnInvalidKey (chunk-RPCDYKBN.js:10219)
+	reconcileChildrenArray (chunk-RPCDYKBN.js:10235)
+	reconcileChildren (chunk-RPCDYKBN.js:14292)
+	updateHostComponent (chunk-RPCDYKBN.js:14807)
+	beginWork$1 (chunk-RPCDYKBN.js:19753)
+	performUnitOfWork (chunk-RPCDYKBN.js:19198)
+	workLoopSync (chunk-RPCDYKBN.js:19137)
+	renderRootSync (chunk-RPCDYKBN.js:19116)
+	performConcurrentWorkOnRoot (chunk-RPCDYKBN.js:18678:98)
+	workLoop (chunk-RPCDYKBN.js:197)
+	flushWork (chunk-RPCDYKBN.js:176)
+	performWorkUntilDeadline (chunk-RPCDYKBN.js:384)
+[Error] Origin https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev is not allowed by Access-Control-Allow-Origin. Status code: 200
+[Error] Fetch API cannot load https://auth.nostrich.pro/api/publish-event due to access control checks.
+[Error] Failed to load resource: Origin https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev is not allowed by Access-Control-Allow-Origin. Status code: 200 (publish-event, line 0)
+[Error] Failed to publish event: – TypeError: Load failed
+TypeError: Load failed
+	(anonymous function) (nostr.ts:100)
+[Error] QR processing error:
+TypeError: Load failed
+	(anonymous function) (Signer.tsx:110)
+[Error] Warning: Encountered two children with the same key, `1753889577273`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+div
+div
+main
+div
+Signer@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/src/pages/Signer.tsx:32:35
+Route@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js:323:14
+Switch@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js:380:27
+Router
+TooltipProviderProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MV53PHM7.js:48:13
+TooltipProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js:2213:43
+QueryClientProvider@https://f91cbda2-2e58-4b10-87b4-3b9b3e6b8cc2-00-l9yxkag9n0cq.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js:2805:9
+App
+	printWarning (chunk-RPCDYKBN.js:521)
+	error (chunk-RPCDYKBN.js:505)
+	warnOnInvalidKey (chunk-RPCDYKBN.js:10219)
+	reconcileChildrenArray (chunk-RPCDYKBN.js:10235)
+	reconcileChildren (chunk-RPCDYKBN.js:14292)
+	updateHostComponent (chunk-RPCDYKBN.js:14807)
+	beginWork$1 (chunk-RPCDYKBN.js:19753)
+	performUnitOfWork (chunk-RPCDYKBN.js:19198)
+	workLoopSync (chunk-RPCDYKBN.js:19137)
+	renderRootSync (chunk-RPCDYKBN.js:19116)
+	performConcurrentWorkOnRoot (chunk-RPCDYKBN.js:18678:98)
+	workLoop (chunk-RPCDYKBN.js:197)
+	flushWork (chunk-RPCDYKBN.js:176)
+	performWorkUntilDeadline (chunk-RPCDYKBN.js:384)
+> Selected Element

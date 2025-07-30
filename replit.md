@@ -124,6 +124,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Server Integration
 - **API Routes**: Express routes under `/api` prefix
+- **Proxy Endpoint**: `/api/publish-event` proxies requests to auth.nostrich.pro to avoid CORS issues
 - **Static Files**: Client build served from `/dist/public`
 - **Development**: Vite middleware integration for HMR
 - **Production**: Pre-built static files served directly

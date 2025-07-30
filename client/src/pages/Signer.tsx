@@ -62,7 +62,7 @@ export default function Signer() {
 
   const addActivity = (type: ActivityEvent['type'], message: string, status: ActivityEvent['status']) => {
     const newEvent: ActivityEvent = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       message,
       timestamp: new Date(),
