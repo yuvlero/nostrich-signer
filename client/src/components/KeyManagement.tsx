@@ -105,7 +105,7 @@ export function KeyManagement({ isOpen, onClose, currentKeys, onKeysChange }: Ke
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <Key className="mr-2 h-5 w-5" />
@@ -122,28 +122,28 @@ export function KeyManagement({ isOpen, onClose, currentKeys, onKeysChange }: Ke
               <div className="space-y-3">
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Public Key (npub)</Label>
-                  <div className="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-800 break-all mt-2">
+                  <div className="bg-gray-50 rounded-lg p-3 font-mono text-xs sm:text-sm text-gray-800 break-all overflow-hidden mt-2">
                     {currentKeys.npub}
                   </div>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Private Key (nsec)</Label>
-                  <div className="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-800 relative mt-2">
-                    <span className={showPrivateKey ? '' : 'blur-sm select-none'}>
+                  <div className="bg-gray-50 rounded-lg p-3 font-mono text-xs sm:text-sm text-gray-800 relative mt-2 overflow-hidden">
+                    <span className={`${showPrivateKey ? '' : 'blur-sm select-none'} break-all pr-10`}>
                       {currentKeys.nsec}
                     </span>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowPrivateKey(!showPrivateKey)}
-                      className="absolute right-2 top-2 p-1 h-8 w-8"
+                      className="absolute right-1 top-1 p-1 h-8 w-8 flex-shrink-0"
                     >
                       {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-orange-600 mt-1 flex items-center">
-                    <AlertTriangle className="mr-1 h-3 w-3" />
-                    Keep your private key secure and never share it
+                  <p className="text-xs text-orange-600 mt-1 flex items-start">
+                    <AlertTriangle className="mr-1 h-3 w-3 flex-shrink-0 mt-0.5" />
+                    <span>Keep your private key secure and never share it</span>
                   </p>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export function KeyManagement({ isOpen, onClose, currentKeys, onKeysChange }: Ke
           {/* Key Actions */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-3">Actions</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Button
                 variant="outline"
                 onClick={handleGenerateNew}
@@ -196,7 +196,7 @@ export function KeyManagement({ isOpen, onClose, currentKeys, onKeysChange }: Ke
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   placeholder="nsec1... or hex private key"
-                  className="font-mono text-sm resize-none mt-2"
+                  className="font-mono text-xs sm:text-sm resize-none mt-2 w-full"
                   rows={3}
                 />
               </div>
