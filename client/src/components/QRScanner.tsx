@@ -70,27 +70,44 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
   const startCamera = useCallback(async () => {
     try {
       setStatus('Requesting camera permission...');
+      setHasPermission(null); // Reset permission state
       
-      const constraints: MediaStreamConstraints = {
+      // Try more permissive constraints first
+      let constraints: MediaStreamConstraints = {
         video: {
-          facingMode: 'environment',
-          width: { ideal: 640 },
-          height: { ideal: 480 }
+          facingMode: 'environment'
         }
       };
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (backCameraError) {
+        console.log('Back camera failed, trying any camera:', backCameraError);
+        // Fallback to any available camera
+        constraints = { video: true };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      }
+      
       streamRef.current = stream;
+      console.log('Camera stream obtained:', stream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+        
+        // Wait for video to be ready
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
+        console.log('Video playing successfully');
       }
 
       // Check for flash support
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
       setFlashSupported('torch' in capabilities);
+      console.log('Track capabilities:', capabilities);
       
       setHasPermission(true);
       onScanningChange(true);
@@ -102,7 +119,7 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
     } catch (error) {
       console.error('Camera error:', error);
       setHasPermission(false);
-      setStatus('Camera permission denied');
+      setStatus(`Camera error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       onScanningChange(false);
     }
   }, [onScanningChange, scanFrame]);
