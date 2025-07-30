@@ -118,21 +118,34 @@ export function createAndSignEvent(
 
 export async function publishEvent(event: NostrEvent): Promise<boolean> {
   try {
+    console.log('Publishing event to auth.nostrich.pro...', event);
+    
     const response = await fetch('https://auth.nostrich.pro/api/publish-event', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(event)
     });
     
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Server error response:', errorText);
       throw new Error(`Server responded with ${response.status}: ${errorText}`);
     }
     
+    const responseData = await response.text();
+    console.log('Success response:', responseData);
+    
     return true;
   } catch (error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to auth.nostrich.pro. Check your internet connection.');
+    }
     console.error('Failed to publish event:', error);
     throw error;
   }

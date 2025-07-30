@@ -90,35 +90,36 @@ export default function Signer() {
     if (isProcessing) return;
     
     setIsProcessing(true);
-    addActivity('scan', 'QR code detected', 'info');
+    addActivity('scan', `QR code detected: ${data.substring(0, 50)}...`, 'info');
     
     try {
+      console.log('QR Code data:', data);
+      
       // Parse NWC URI
       const nwcData = parseNWCUri(data);
       if (!nwcData) {
-        throw new Error('Invalid QR code format. Expected Nostr Wallet Connect URI.');
+        throw new Error(`Invalid QR code format. Expected Nostr Wallet Connect URI, got: ${data.substring(0, 100)}`);
       }
 
-      if (settings.detailedLogs) {
-        console.log('Parsed NWC data:', nwcData);
-      }
+      console.log('Parsed NWC data:', nwcData);
+      addActivity('scan', `Parsed challengeId: ${nwcData.challengeId}`, 'info');
 
       if (!keys) {
         throw new Error('No keys available for signing. Please generate or import keys first.');
       }
 
       // Create and sign event
+      addActivity('sign', 'Creating and signing event...', 'info');
       const signedEvent = createAndSignEvent(keys.privateKey, keys.publicKey, nwcData);
       
-      if (settings.detailedLogs) {
-        console.log('Signed event:', signedEvent);
-      }
+      console.log('Signed event:', signedEvent);
 
       // Publish to auth server
+      addActivity('sign', 'Publishing to auth.nostrich.pro...', 'info');
       await publishEvent(signedEvent);
       
       showStatus('success', 'Event signed successfully! Authentication completed and sent to auth.nostrich.pro');
-      addActivity('sign', 'Event signed and published', 'success');
+      addActivity('sign', 'Event signed and published successfully', 'success');
       
       toast({
         title: "Success!",
@@ -127,6 +128,7 @@ export default function Signer() {
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('QR processing error:', error);
       showStatus('error', `Failed to process QR code: ${errorMessage}`);
       addActivity('error', errorMessage, 'error');
       
@@ -135,10 +137,6 @@ export default function Signer() {
         description: errorMessage,
         variant: "destructive",
       });
-      
-      if (settings.detailedLogs) {
-        console.error('QR processing error:', error);
-      }
     } finally {
       setIsProcessing(false);
     }
@@ -274,6 +272,40 @@ export default function Signer() {
           isScanning={isScanning}
           onScanningChange={setIsScanning}
         />
+
+        {/* Test QR Code Section */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Test QR Processing</h2>
+          <p className="text-gray-600 text-sm mb-4">
+            Test QR code processing without camera by entering a Nostr Wallet Connect URI manually:
+          </p>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                const testUri = "nostr+walletconnect://?challengeId=test123&relay=wss%3A//relay.damus.io&secret=abc456";
+                handleQRCodeDetected(testUri);
+              }}
+              className="w-full"
+              disabled={isProcessing}
+            >
+              Test with Sample URI
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const testData = prompt("Enter QR code data to test:");
+                if (testData) {
+                  handleQRCodeDetected(testData);
+                }
+              }}
+              className="w-full"
+              disabled={isProcessing}
+            >
+              Test with Custom Data
+            </Button>
+          </div>
+        </div>
 
         {/* Recent Activity */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
