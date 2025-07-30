@@ -6,18 +6,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // put application routes here
   // prefix all routes with /api
 
-  // Proxy endpoint for publishing events to auth.nostrich.pro
+  // Proxy endpoint for publishing events to configurable auth server
   app.post("/api/publish-event", async (req, res) => {
     try {
-      console.log('Proxying publish event request:', req.body);
+      const { serverUrl, ...eventData } = req.body;
+      const targetUrl = serverUrl || 'https://auth.nostrich.pro';
       
-      const response = await fetch('https://auth.nostrich.pro/api/publish-event', {
+      console.log('Proxying publish event request:', eventData);
+      console.log('Target server:', targetUrl);
+      
+      const response = await fetch(`${targetUrl}/api/publish-event`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(req.body)
+        body: JSON.stringify(eventData)
       });
       
       console.log('Auth server response status:', response.status);

@@ -6,6 +6,7 @@ const SETTINGS_STORAGE_KEY = 'nostrich_signer_settings';
 export interface AppSettings {
   autoScan: boolean;
   detailedLogs: boolean;
+  serverUrl: string;
 }
 
 export function saveKeys(keys: NostrKeys): void {
@@ -47,14 +48,16 @@ export function saveSettings(settings: AppSettings): void {
 export function loadSettings(): AppSettings {
   try {
     const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    const defaults = { autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' };
+    
     if (!stored) {
-      return { autoScan: true, detailedLogs: false };
+      return defaults;
     }
     
-    return { ...{ autoScan: true, detailedLogs: false }, ...JSON.parse(stored) };
+    return { ...defaults, ...JSON.parse(stored) };
   } catch (error) {
     console.error('Failed to load settings from localStorage:', error);
-    return { autoScan: true, detailedLogs: false };
+    return { autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' };
   }
 }
 

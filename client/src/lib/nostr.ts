@@ -116,7 +116,7 @@ export function createAndSignEvent(
   return finalizeEvent(eventTemplate, privateKeyBytes);
 }
 
-export async function publishEvent(event: NostrEvent): Promise<boolean> {
+export async function publishEvent(event: NostrEvent, serverUrl: string = 'https://auth.nostrich.pro'): Promise<boolean> {
   try {
     console.log('Publishing event via proxy...', event);
     
@@ -126,7 +126,7 @@ export async function publishEvent(event: NostrEvent): Promise<boolean> {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(event)
+      body: JSON.stringify({ ...event, serverUrl })
     });
     
     console.log('Proxy response status:', response.status);

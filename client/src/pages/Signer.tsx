@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { QRScanner } from '@/components/QRScanner';
 import { KeyManagement } from '@/components/KeyManagement';
 import { StatusBanner } from '@/components/StatusBanner';
@@ -24,7 +25,7 @@ export default function Signer() {
   const [isScanning, setIsScanning] = useState(false);
   const [keyManagerOpen, setKeyManagerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settings, setSettings] = useState<AppSettings>({ autoScan: true, detailedLogs: false });
+  const [settings, setSettings] = useState<AppSettings>({ autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' });
   const [statusBanner, setStatusBanner] = useState<{
     visible: boolean;
     type: 'success' | 'error' | 'info';
@@ -115,11 +116,11 @@ export default function Signer() {
       console.log('Signed event:', signedEvent);
 
       // Publish to auth server
-      addActivity('sign', 'Publishing to auth.nostrich.pro...', 'info');
+      addActivity('sign', `Publishing to ${new URL(settings.serverUrl).hostname}...`, 'info');
       console.log('About to publish event:', JSON.stringify(signedEvent, null, 2));
-      await publishEvent(signedEvent);
+      await publishEvent(signedEvent, settings.serverUrl);
       
-      showStatus('success', 'Event signed successfully! Authentication completed and sent to auth.nostrich.pro');
+      showStatus('success', `Event signed successfully! Authentication completed and sent to ${new URL(settings.serverUrl).hostname}`);
       addActivity('sign', 'Event signed and published successfully', 'success');
       
       toast({
@@ -353,6 +354,17 @@ export default function Signer() {
                     onCheckedChange={(checked) => handleSettingsChange({ ...settings, detailedLogs: checked })}
                   />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label className="font-medium text-gray-900">Authentication Server</Label>
+                  <Input
+                    value={settings.serverUrl}
+                    onChange={(e) => handleSettingsChange({ ...settings, serverUrl: e.target.value })}
+                    placeholder="https://auth.nostrich.pro"
+                    className="w-full"
+                  />
+                  <p className="text-sm text-gray-600">URL of the authentication server for event publishing</p>
+                </div>
               </div>
             </div>
 
@@ -360,7 +372,7 @@ export default function Signer() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">About</h3>
               <div className="space-y-2 text-sm text-gray-600">
                 <p><strong>Version:</strong> 1.0.0</p>
-                <p><strong>Server:</strong> auth.nostrich.pro</p>
+                <p><strong>Current Server:</strong> {new URL(settings.serverUrl).hostname}</p>
                 <p><strong>Protocol:</strong> Nostr Wallet Connect</p>
               </div>
             </div>
