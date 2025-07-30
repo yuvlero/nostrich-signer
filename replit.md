@@ -37,10 +37,11 @@ Preferred communication style: Simple, everyday language.
 ### Core Functionality Components
 
 #### QR Scanner (`QRScanner.tsx`)
-- **Purpose**: Camera-based QR code scanning using jsQR library
-- **Features**: Flash support, permission handling, real-time scanning
-- **Problem Solved**: Enables scanning of Nostr Wallet Connect URIs from mobile apps
+- **Purpose**: Camera-based QR code scanning using jsQR library and manual URI input
+- **Features**: Flash support, permission handling, real-time scanning, paste URI dialog
+- **Problem Solved**: Enables scanning of Nostr Wallet Connect URIs from mobile apps or manual input for camera issues
 - **Technology Choice**: jsQR chosen for browser compatibility and no external dependencies
+- **Recent Update**: Added "Paste Link" button for manual NWC URI entry, removed empty camera view
 
 #### Key Management (`KeyManagement.tsx`)
 - **Purpose**: Generate, import, export, and manage Nostr private keys

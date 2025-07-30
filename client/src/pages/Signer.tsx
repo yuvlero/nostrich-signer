@@ -274,41 +274,6 @@ export default function Signer() {
           onScanningChange={setIsScanning}
         />
 
-        {/* Test QR Code Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Test QR Processing</h2>
-          <p className="text-gray-600 text-sm mb-4">
-            Test QR code processing without camera by entering a Nostr Wallet Connect URI manually:
-          </p>
-          <div className="space-y-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                const testUri = "nostr+walletconnect://?challengeId=test123&relay=wss%3A//relay.damus.io&secret=abc456";
-                console.log('Testing with URI:', testUri);
-                handleQRCodeDetected(testUri);
-              }}
-              className="w-full"
-              disabled={isProcessing}
-            >
-              Test with Sample URI
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const testData = prompt("Enter QR code data to test:");
-                if (testData) {
-                  handleQRCodeDetected(testData);
-                }
-              }}
-              className="w-full"
-              disabled={isProcessing}
-            >
-              Test with Custom Data
-            </Button>
-          </div>
-        </div>
-
         {/* Recent Activity */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>

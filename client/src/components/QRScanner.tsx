@@ -1,6 +1,9 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { Camera, Square, Zap, Play } from 'lucide-react';
+import { Camera, Square, Zap, Play, Link } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import jsQR from 'jsqr';
 
 interface QRScannerProps {
@@ -19,6 +22,8 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
   const [flashSupported, setFlashSupported] = useState(false);
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [status, setStatus] = useState('Ready to scan');
+  const [pasteDialogOpen, setPasteDialogOpen] = useState(false);
+  const [pastedUri, setPastedUri] = useState('');
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -116,6 +121,14 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
     }
   }, [flashEnabled, flashSupported]);
 
+  const handlePasteUri = useCallback(() => {
+    if (pastedUri.trim()) {
+      onQRCodeDetected(pastedUri.trim());
+      setPastedUri('');
+      setPasteDialogOpen(false);
+    }
+  }, [pastedUri, onQRCodeDetected]);
+
   useEffect(() => {
     return () => {
       stopCamera();
@@ -123,106 +136,153 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
   }, [stopCamera]);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 pb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">QR Code Scanner</h2>
-          <div className="text-sm text-gray-600 flex items-center">
-            <Camera className="mr-1 h-4 w-4" />
-            <span>{status}</span>
+    <>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-6 pb-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">QR Code Scanner</h2>
+            <div className="text-sm text-gray-600 flex items-center">
+              <Camera className="mr-1 h-4 w-4" />
+              <span>{status}</span>
+            </div>
           </div>
+          <p className="text-gray-600 text-sm mb-4">
+            Scan a Nostr Wallet Connect QR code or paste the URI directly to authenticate and sign events.
+          </p>
         </div>
-        <p className="text-gray-600 text-sm mb-4">
-          Scan a Nostr Wallet Connect QR code to authenticate and sign events.
-        </p>
-      </div>
 
-      {/* Camera View */}
-      <div className="relative bg-gray-900 aspect-square mx-4 mb-4 rounded-lg overflow-hidden">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          playsInline
-          muted
-          style={{ display: isScanning ? 'block' : 'none' }}
-        />
-        <canvas
-          ref={canvasRef}
-          className="hidden"
-        />
-        
-        {!isScanning && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <Camera className="text-gray-400 h-12 w-12 mb-3 mx-auto" />
-              <p className="text-gray-400 text-sm">Camera not active</p>
-              <p className="text-gray-500 text-xs mt-1">Tap start to begin scanning</p>
-            </div>
-          </div>
-        )}
-        
-        {/* QR Scanner Overlay */}
+        {/* Camera View - Only show when scanning */}
         {isScanning && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-48 h-48 border-2 border-white rounded-lg relative">
-              {/* Corner indicators */}
-              <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
-              <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
-              <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
-              <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
-              
-              {/* Scanning line animation */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary animate-pulse"></div>
+          <div className="relative bg-gray-900 aspect-square mx-4 mb-4 rounded-lg overflow-hidden">
+            <video
+              ref={videoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              playsInline
+              muted
+            />
+            <canvas
+              ref={canvasRef}
+              className="hidden"
+            />
+            
+            {/* QR Scanner Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-48 h-48 border-2 border-white rounded-lg relative">
+                {/* Corner indicators */}
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+                <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
+                
+                {/* Scanning line animation */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary animate-pulse"></div>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* Permission denied overlay */}
-        {hasPermission === false && (
-          <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center">
-            <div className="text-center text-white p-6">
-              <Camera className="h-8 w-8 mb-3 mx-auto" />
-              <p className="font-medium mb-2">Camera Permission Required</p>
-              <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Scanner Controls */}
-      <div className="p-6 pt-0">
-        <div className="flex space-x-3">
-          <Button
-            onClick={isScanning ? stopCamera : startCamera}
-            className="flex-1"
-            disabled={hasPermission === false}
-          >
-            {isScanning ? (
-              <>
-                <Square className="mr-2 h-4 w-4" />
-                Stop Scanning
-              </>
-            ) : (
-              <>
-                <Play className="mr-2 h-4 w-4" />
-                Start Scanning
-              </>
+            {/* Permission denied overlay */}
+            {hasPermission === false && (
+              <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center">
+                <div className="text-center text-white p-6">
+                  <Camera className="h-8 w-8 mb-3 mx-auto" />
+                  <p className="font-medium mb-2">Camera Permission Required</p>
+                  <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
+                </div>
+              </div>
             )}
-          </Button>
-          
-          {flashSupported && (
+          </div>
+        )}
+
+        {/* Scanner Controls */}
+        <div className="p-6 pt-0">
+          <div className="flex space-x-3">
+            <Button
+              onClick={isScanning ? stopCamera : startCamera}
+              className="flex-1"
+              disabled={hasPermission === false}
+            >
+              {isScanning ? (
+                <>
+                  <Square className="mr-2 h-4 w-4" />
+                  Stop Scanning
+                </>
+              ) : (
+                <>
+                  <Play className="mr-2 h-4 w-4" />
+                  Start Scanning
+                </>
+              )}
+            </Button>
+            
             <Button
               variant="outline"
-              onClick={toggleFlash}
-              disabled={!isScanning}
-              className={flashEnabled ? 'bg-yellow-100' : ''}
+              onClick={() => setPasteDialogOpen(true)}
+              className="flex-1"
             >
-              <Zap className="h-4 w-4" />
+              <Link className="mr-2 h-4 w-4" />
+              Paste Link
             </Button>
-          )}
+            
+            {flashSupported && isScanning && (
+              <Button
+                variant="outline"
+                onClick={toggleFlash}
+                className={flashEnabled ? 'bg-yellow-100' : ''}
+              >
+                <Zap className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Paste URI Dialog */}
+      <Dialog open={pasteDialogOpen} onOpenChange={setPasteDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Link className="mr-2 h-5 w-5" />
+              Paste NWC URI
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="nwc-uri">Nostr Wallet Connect URI</Label>
+              <Input
+                id="nwc-uri"
+                placeholder="nostr+walletconnect://..."
+                value={pastedUri}
+                onChange={(e) => setPastedUri(e.target.value)}
+                className="mt-2"
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                Paste the NWC URI from your wallet app to sign the authentication event.
+              </p>
+            </div>
+            
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPasteDialogOpen(false);
+                  setPastedUri('');
+                }}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handlePasteUri}
+                disabled={!pastedUri.trim()}
+                className="flex-1"
+              >
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
