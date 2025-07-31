@@ -33,6 +33,7 @@ export default function Signer() {
   }>({ visible: false, type: 'info', message: '' });
   const [recentActivity, setRecentActivity] = useState<ActivityEvent[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [testingServer, setTestingServer] = useState(false);
   
   const { toast } = useToast();
 
@@ -85,6 +86,48 @@ export default function Signer() {
   const handleSettingsChange = (newSettings: AppSettings) => {
     setSettings(newSettings);
     saveSettings(newSettings);
+  };
+
+  const testServerConnection = async () => {
+    if (testingServer) return;
+    
+    setTestingServer(true);
+    try {
+      const response = await fetch('/api/test-server', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ serverUrl: settings.serverUrl })
+      });
+      
+      const result = await response.json();
+      
+      if (result.reachable) {
+        showStatus('success', `Server connection successful! (${result.url})`);
+        toast({
+          title: "Server Test Successful",
+          description: `Connected to ${new URL(result.url).hostname}`,
+        });
+      } else {
+        showStatus('error', `Server connection failed: ${result.error || result.statusText || 'Unknown error'}`);
+        toast({
+          title: "Server Test Failed",
+          description: result.error || `Failed to connect to ${new URL(result.url).hostname}`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Network error';
+      showStatus('error', `Server test failed: ${errorMessage}`);
+      toast({
+        title: "Server Test Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setTestingServer(false);
+    }
   };
 
   const handleQRCodeDetected = async (data: string) => {

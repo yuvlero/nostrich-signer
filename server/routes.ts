@@ -14,6 +14,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Proxying publish event request:', eventData);
       console.log('Target server:', targetUrl);
+      console.log('Using custom server:', serverUrl !== undefined && serverUrl !== 'https://auth.nostrich.pro');
       
       const response = await fetch(`${targetUrl}/api/publish-event`, {
         method: 'POST',
@@ -29,8 +30,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Auth server error:', errorText);
+        
+        // Add helpful message for server switching debugging
+        const isCustomServer = serverUrl && serverUrl !== 'https://auth.nostrich.pro';
+        const debugInfo = isCustomServer 
+          ? ` (Custom server: ${serverUrl}. This error suggests the custom server doesn't have the challenge ID from the QR code.)`
+          : '';
+        
         return res.status(response.status).json({ 
-          error: `Auth server error: ${errorText}` 
+          error: `Auth server error: ${errorText}${debugInfo}` 
         });
       }
       
@@ -43,6 +51,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Proxy error:', error);
       res.status(500).json({ 
         error: error instanceof Error ? error.message : 'Unknown proxy error' 
+      });
+    }
+  });
+
+  // Test endpoint to verify server switching functionality
+  app.post("/api/test-server", async (req, res) => {
+    try {
+      const { serverUrl } = req.body;
+      const targetUrl = serverUrl || 'https://auth.nostrich.pro';
+      
+      console.log('Testing connection to:', targetUrl);
+      
+      const response = await fetch(`${targetUrl}/health`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      const result = {
+        url: targetUrl,
+        status: response.status,
+        statusText: response.statusText,
+        reachable: response.ok
+      };
+      
+      console.log('Server test result:', result);
+      res.status(200).json(result);
+      
+    } catch (error) {
+      console.log('Server test error:', error);
+      res.status(200).json({ 
+        url: req.body.serverUrl || 'https://auth.nostrich.pro',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        reachable: false
       });
     }
   });
