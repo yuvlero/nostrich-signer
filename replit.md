@@ -67,7 +67,8 @@ Preferred communication style: Simple, everyday language.
 
 #### Local Storage (`lib/storage.ts`)
 - **Keys Storage**: Encrypted private keys with public key derivation
-- **Settings Storage**: User preferences (auto-scan, detailed logs)
+- **Settings Storage**: User preferences (auto-scan, detailed logs, server URL)
+- **Server Configuration**: Development environment defaults to custom server, production uses auth.nostrich.pro
 - **Design Choice**: Client-side storage for privacy and offline capability
 
 ## Data Flow

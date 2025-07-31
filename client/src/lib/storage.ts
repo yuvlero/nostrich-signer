@@ -48,7 +48,12 @@ export function saveSettings(settings: AppSettings): void {
 export function loadSettings(): AppSettings {
   try {
     const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    const defaults = { autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' };
+    // Use dev server for this environment, production server for prod
+    const devServer = 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev';
+    const prodServer = 'https://auth.nostrich.pro';
+    const defaultServer = import.meta.env.MODE === 'development' ? devServer : prodServer;
+    
+    const defaults = { autoScan: true, detailedLogs: false, serverUrl: defaultServer };
     
     if (!stored) {
       return defaults;
@@ -57,7 +62,10 @@ export function loadSettings(): AppSettings {
     return { ...defaults, ...JSON.parse(stored) };
   } catch (error) {
     console.error('Failed to load settings from localStorage:', error);
-    return { autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' };
+    const devServer = 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev';
+    const prodServer = 'https://auth.nostrich.pro';
+    const defaultServer = import.meta.env.MODE === 'development' ? devServer : prodServer;
+    return { autoScan: true, detailedLogs: false, serverUrl: defaultServer };
   }
 }
 

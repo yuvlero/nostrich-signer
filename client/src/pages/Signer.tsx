@@ -25,7 +25,11 @@ export default function Signer() {
   const [isScanning, setIsScanning] = useState(false);
   const [keyManagerOpen, setKeyManagerOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settings, setSettings] = useState<AppSettings>({ autoScan: true, detailedLogs: false, serverUrl: 'https://auth.nostrich.pro' });
+  const [settings, setSettings] = useState<AppSettings>({ 
+    autoScan: true, 
+    detailedLogs: false, 
+    serverUrl: 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev'
+  });
   const [statusBanner, setStatusBanner] = useState<{
     visible: boolean;
     type: 'success' | 'error' | 'info';
@@ -403,7 +407,7 @@ export default function Signer() {
                   <Input
                     value={settings.serverUrl}
                     onChange={(e) => handleSettingsChange({ ...settings, serverUrl: e.target.value })}
-                    placeholder="https://auth.nostrich.pro"
+                    placeholder="https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev"
                     className="w-full"
                   />
                   <p className="text-sm text-gray-600">URL of the authentication server for event publishing</p>
