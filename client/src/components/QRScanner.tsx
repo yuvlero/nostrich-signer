@@ -151,67 +151,16 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
           </p>
         </div>
 
-        {/* Camera View - Only show when scanning */}
-        {isScanning && (
-          <div className="relative bg-gray-900 aspect-square mx-4 mb-4 rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              playsInline
-              muted
-            />
-            <canvas
-              ref={canvasRef}
-              className="hidden"
-            />
-            
-            {/* QR Scanner Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-48 border-2 border-white rounded-lg relative">
-                {/* Corner indicators */}
-                <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
-                
-                {/* Scanning line animation */}
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary animate-pulse"></div>
-              </div>
-            </div>
-
-            {/* Permission denied overlay */}
-            {hasPermission === false && (
-              <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center">
-                <div className="text-center text-white p-6">
-                  <Camera className="h-8 w-8 mb-3 mx-auto" />
-                  <p className="font-medium mb-2">Camera Permission Required</p>
-                  <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Scanner Controls */}
         <div className="p-6 pt-0">
           <div className="flex space-x-3">
             <Button
-              onClick={isScanning ? stopCamera : startCamera}
+              onClick={startCamera}
               className="flex-1"
               disabled={hasPermission === false}
             >
-              {isScanning ? (
-                <>
-                  <Square className="mr-2 h-4 w-4" />
-                  Stop Scanning
-                </>
-              ) : (
-                <>
-                  <Play className="mr-2 h-4 w-4" />
-                  Start Scanning
-                </>
-              )}
+              <Play className="mr-2 h-4 w-4" />
+              Start Scanning
             </Button>
             
             <Button
@@ -222,19 +171,94 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
               <Link className="mr-2 h-4 w-4" />
               Paste Link
             </Button>
-            
-            {flashSupported && isScanning && (
-              <Button
-                variant="outline"
-                onClick={toggleFlash}
-                className={flashEnabled ? 'bg-yellow-100' : ''}
-              >
-                <Zap className="h-4 w-4" />
-              </Button>
-            )}
           </div>
         </div>
       </div>
+
+      {/* Full Screen Camera Modal */}
+      <Dialog open={isScanning} onOpenChange={(open) => !open && stopCamera()}>
+        <DialogContent className="max-w-none w-screen h-screen m-0 p-0 border-0 bg-black">
+          <div className="relative w-full h-full">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              playsInline
+              muted
+            />
+            <canvas
+              ref={canvasRef}
+              className="hidden"
+            />
+            
+            {/* Top Controls Bar */}
+            <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/50 to-transparent p-4">
+              <div className="flex items-center justify-between text-white">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={stopCamera}
+                  className="text-white hover:bg-white/20"
+                >
+                  <Square className="mr-2 h-4 w-4" />
+                  Close
+                </Button>
+                
+                {flashSupported && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleFlash}
+                    className={`text-white hover:bg-white/20 ${flashEnabled ? 'bg-yellow-400/30' : ''}`}
+                  >
+                    <Zap className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+            
+            {/* QR Scanner Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-64 h-64 border-2 border-white rounded-lg relative">
+                {/* Corner indicators */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
+                
+                {/* Scanning line animation */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-primary animate-pulse"></div>
+              </div>
+            </div>
+
+            {/* Bottom Status */}
+            <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/50 to-transparent p-6">
+              <div className="text-center text-white">
+                <p className="text-lg font-medium">{status}</p>
+                <p className="text-sm opacity-75 mt-1">Position QR code within the frame</p>
+              </div>
+            </div>
+
+            {/* Permission denied overlay */}
+            {hasPermission === false && (
+              <div className="absolute inset-0 bg-red-900 bg-opacity-90 flex items-center justify-center z-20">
+                <div className="text-center text-white p-6">
+                  <Camera className="h-12 w-12 mb-4 mx-auto" />
+                  <p className="text-xl font-medium mb-2">Camera Permission Required</p>
+                  <p className="text-sm opacity-90">Please enable camera access to scan QR codes</p>
+                  <Button
+                    variant="outline"
+                    onClick={stopCamera}
+                    className="mt-4 text-white border-white hover:bg-white hover:text-black"
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Paste URI Dialog */}
       <Dialog open={pasteDialogOpen} onOpenChange={setPasteDialogOpen}>
