@@ -233,11 +233,11 @@ export default function Signer() {
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 flex items-center justify-center">
+              <div className="w-12 h-12 flex items-center justify-center">
                 <img 
                   src={nostrichLogo} 
                   alt="Nostrich" 
-                  className="w-8 h-8 object-contain filter contrast-125" 
+                  className="w-12 h-12 object-contain filter contrast-125" 
                 />
               </div>
               <h1 className="text-xl font-semibold text-gray-900">Nostrich Signer</h1>
