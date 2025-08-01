@@ -134,10 +134,17 @@ UI Preferences:
 
 ### Server Integration
 - **API Routes**: Express routes under `/api` prefix
-- **Proxy Endpoint**: `/api/publish-event` proxies requests to auth.nostrich.pro to avoid CORS issues
+- **Proxy Endpoint**: `/api/publish-event` proxies requests to auth.nostrich.pro with platform domain tracking
+- **Challenge Tracking**: PLATFORM_DOMAIN environment variable sent to auth server for trackable challenges
 - **Static Files**: Client build served from `/dist/public`
 - **Development**: Vite middleware integration for HMR
 - **Production**: Pre-built static files served directly
+
+### Authentication Server Configuration
+- **Production Server**: `https://auth.nostrich.pro` (main Nostrich authentication server)
+- **Development Server**: `https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev`
+- **Environment-based**: Automatically selects dev server in development mode, production server in production
+- **User Configurable**: Server URL can be overridden in application settings
 
 ### Security Considerations
 - **Key Storage**: Private keys never leave the browser

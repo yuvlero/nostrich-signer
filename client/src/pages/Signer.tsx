@@ -29,7 +29,7 @@ export default function Signer() {
   const [settings, setSettings] = useState<AppSettings>({ 
     autoScan: true, 
     detailedLogs: false, 
-    serverUrl: 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev'
+    serverUrl: 'https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev'
   });
   const [statusBanner, setStatusBanner] = useState<{
     visible: boolean;
@@ -418,7 +418,7 @@ export default function Signer() {
                   <Input
                     value={settings.serverUrl}
                     onChange={(e) => handleSettingsChange({ ...settings, serverUrl: e.target.value })}
-                    placeholder="https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev"
+                    placeholder="https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev"
                     className="w-full"
                   />
                   <p className="text-sm text-gray-600">URL of the authentication server for event publishing</p>

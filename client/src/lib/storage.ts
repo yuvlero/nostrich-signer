@@ -49,7 +49,7 @@ export function loadSettings(): AppSettings {
   try {
     const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
     // Use dev server for this environment, production server for prod
-    const devServer = 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev';
+    const devServer = 'https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev';
     const prodServer = 'https://auth.nostrich.pro';
     const defaultServer = import.meta.env.MODE === 'development' ? devServer : prodServer;
     
@@ -62,7 +62,7 @@ export function loadSettings(): AppSettings {
     return { ...defaults, ...JSON.parse(stored) };
   } catch (error) {
     console.error('Failed to load settings from localStorage:', error);
-    const devServer = 'https://ae2c3363-e58f-4e84-bccb-70ae9f5b7c81-00-2nso0uyajux8e.kirk.replit.dev';
+    const devServer = 'https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev';
     const prodServer = 'https://auth.nostrich.pro';
     const defaultServer = import.meta.env.MODE === 'development' ? devServer : prodServer;
     return { autoScan: true, detailedLogs: false, serverUrl: defaultServer };
