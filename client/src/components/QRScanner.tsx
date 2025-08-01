@@ -57,11 +57,27 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     const code = jsQR(imageData.data, imageData.width, imageData.height);
     
-    if (code) {
-      setStatus('QR Code detected!');
-      onQRCodeDetected(code.data);
-      stopCamera();
-      return;
+    if (code && code.data) {
+      // Only process if it looks like a valid NWC URI or other expected format
+      const data = code.data.trim();
+      console.log('QR detected (first 100 chars):', data.substring(0, 100));
+      
+      if (data.length > 10 && (
+        data.startsWith('nostr+walletconnect://') || 
+        data.startsWith('nostr://') ||
+        data.startsWith('lnurlp://') ||
+        data.startsWith('lnbc') ||
+        data.startsWith('http')
+      )) {
+        console.log('Valid QR code format detected, processing...');
+        setStatus('QR Code detected!');
+        onQRCodeDetected(data);
+        stopCamera();
+        return;
+      } else {
+        // Log invalid QR codes but don't process them
+        console.log('Invalid QR format detected, ignoring and continuing to scan');
+      }
     }
     
     animationRef.current = requestAnimationFrame(scanFrame);

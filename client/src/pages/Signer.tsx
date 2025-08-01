@@ -179,14 +179,21 @@ export default function Signer() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       console.error('QR processing error:', error);
-      showStatus('error', `Failed to process QR code: ${errorMessage}`);
-      addActivity('error', errorMessage, 'error');
       
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      // Don't close scanner for invalid QR codes - keep scanning
+      if (errorMessage.includes('Invalid QR code format')) {
+        console.log('Invalid QR format detected, continuing to scan...');
+        addActivity('scan', 'Invalid QR format - continuing to scan', 'info');
+      } else {
+        showStatus('error', `Failed to process QR code: ${errorMessage}`);
+        addActivity('error', errorMessage, 'error');
+        
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsProcessing(false);
     }
