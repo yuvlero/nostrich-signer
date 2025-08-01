@@ -7,6 +7,10 @@ This is a standalone Node.js + React application that functions as a Nostr signe
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+UI Preferences: 
+- IBM Plex Mono font throughout the application
+- Nostrich pixel art logo (49px size) 
+- Full-screen camera modal for QR scanning (mobile app style)
 
 ## System Architecture
 
@@ -41,7 +45,11 @@ Preferred communication style: Simple, everyday language.
 - **Features**: Flash support, permission handling, real-time scanning, paste URI dialog
 - **Problem Solved**: Enables scanning of Nostr Wallet Connect URIs from mobile apps or manual input for camera issues
 - **Technology Choice**: jsQR chosen for browser compatibility and no external dependencies
-- **Recent Update**: Added "Paste Link" button for manual NWC URI entry, removed empty camera view
+- **Recent Updates**: 
+  - Added "Paste Link" button for manual NWC URI entry
+  - Implemented full-screen camera modal for immersive scanning experience
+  - Added QR code format validation to prevent false positives
+  - Camera remains open until valid Nostr/wallet connect QR code is detected
 
 #### Key Management (`KeyManagement.tsx`)
 - **Purpose**: Generate, import, export, and manage Nostr private keys

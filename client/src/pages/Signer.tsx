@@ -182,7 +182,6 @@ export default function Signer() {
       
       // Don't close scanner for invalid QR codes - keep scanning
       if (errorMessage.includes('Invalid QR code format')) {
-        console.log('Invalid QR format detected, continuing to scan...');
         addActivity('scan', 'Invalid QR format - continuing to scan', 'info');
       } else {
         showStatus('error', `Failed to process QR code: ${errorMessage}`);

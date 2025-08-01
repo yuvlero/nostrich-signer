@@ -60,7 +60,6 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
     if (code && code.data) {
       // Only process if it looks like a valid NWC URI or other expected format
       const data = code.data.trim();
-      console.log('QR detected (first 100 chars):', data.substring(0, 100));
       
       if (data.length > 10 && (
         data.startsWith('nostr+walletconnect://') || 
@@ -69,14 +68,10 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
         data.startsWith('lnbc') ||
         data.startsWith('http')
       )) {
-        console.log('Valid QR code format detected, processing...');
         setStatus('QR Code detected!');
         onQRCodeDetected(data);
         stopCamera();
         return;
-      } else {
-        // Log invalid QR codes but don't process them
-        console.log('Invalid QR format detected, ignoring and continuing to scan');
       }
     }
     
@@ -107,19 +102,16 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
         
         // Add event listeners for video loading
         videoRef.current.onloadedmetadata = () => {
-          console.log('Video metadata loaded');
           setStatus('Camera ready...');
         };
         
         videoRef.current.oncanplay = () => {
-          console.log('Video can play');
           setStatus('Scanning for QR codes...');
           // Start scanning after video is ready
           animationRef.current = requestAnimationFrame(scanFrame);
         };
         
-        videoRef.current.onerror = (e) => {
-          console.error('Video error:', e);
+        videoRef.current.onerror = () => {
           setStatus('Video error occurred');
         };
         
