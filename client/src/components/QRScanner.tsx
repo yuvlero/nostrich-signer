@@ -70,20 +70,43 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
   const startCamera = useCallback(async () => {
     try {
       setStatus('Requesting camera permission...');
+      onScanningChange(true); // Open modal first
       
       const constraints: MediaStreamConstraints = {
         video: {
           facingMode: 'environment',
-          width: { ideal: 640 },
-          height: { ideal: 480 }
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
       
+      // Wait for modal to be open and video element to be available
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        
+        // Add event listeners for video loading
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Video metadata loaded');
+          setStatus('Camera ready...');
+        };
+        
+        videoRef.current.oncanplay = () => {
+          console.log('Video can play');
+          setStatus('Scanning for QR codes...');
+          // Start scanning after video is ready
+          animationRef.current = requestAnimationFrame(scanFrame);
+        };
+        
+        videoRef.current.onerror = (e) => {
+          console.error('Video error:', e);
+          setStatus('Video error occurred');
+        };
+        
         await videoRef.current.play();
       }
 
@@ -93,11 +116,6 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
       setFlashSupported('torch' in capabilities);
       
       setHasPermission(true);
-      onScanningChange(true);
-      setStatus('Scanning for QR codes...');
-      
-      // Start scanning
-      animationRef.current = requestAnimationFrame(scanFrame);
       
     } catch (error) {
       console.error('Camera error:', error);
@@ -128,6 +146,14 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
       setPasteDialogOpen(false);
     }
   }, [pastedUri, onQRCodeDetected]);
+
+  // Effect to handle video stream when modal opens
+  useEffect(() => {
+    if (isScanning && streamRef.current && videoRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(console.error);
+    }
+  }, [isScanning]);
 
   useEffect(() => {
     return () => {
@@ -185,6 +211,7 @@ export function QRScanner({ onQRCodeDetected, isScanning, onScanningChange }: QR
               autoPlay
               playsInline
               muted
+              controls={false}
             />
             <canvas
               ref={canvasRef}
