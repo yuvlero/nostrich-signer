@@ -71,15 +71,25 @@ export function parseNWCUri(uri: string): NWCUri | null {
   try {
     const url = new URL(uri);
     
-    if (url.protocol !== 'nostr+walletconnect:') {
+    if (!url.protocol.startsWith('nostr')) {
       return null;
     }
     
-    const challengeId = url.searchParams.get('challengeId');
+    // For nostr+walletconnect:// URIs, the challenge ID is typically the hostname
+    // and relay/secret are URL parameters
+    let challengeId = url.searchParams.get('challengeId') || url.hostname;
     const relay = url.searchParams.get('relay');
     const secret = url.searchParams.get('secret');
     
+    // Handle case where challengeId might be in pathname (remove leading slash)
+    if (!challengeId || challengeId === '') {
+      challengeId = url.pathname.replace('/', '');
+    }
+    
+    console.log('Parsing NWC URI:', { uri, challengeId, relay, secret });
+    
     if (!challengeId || !relay || !secret) {
+      console.error('Missing required NWC parameters:', { challengeId: !!challengeId, relay: !!relay, secret: !!secret });
       return null;
     }
     
