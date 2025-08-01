@@ -102,14 +102,14 @@ export function createAndSignEvent(
   const privateKeyBytes = hexToBytes(privateKeyHex);
   
   const eventTemplate = {
-    kind: 1,
+    kind: 22242,
     created_at: Math.floor(Date.now() / 1000),
     tags: [
       ['challenge', nwcData.challengeId],
       ['nwc', nwcData.secret],
       ['relay', nwcData.relay]
     ],
-    content: 'Signed login response',
+    content: '',
     pubkey: publicKeyHex
   };
   
