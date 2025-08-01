@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Settings, Signature, CheckCircle, QrCode, Key } from 'lucide-react';
+import { Settings, CheckCircle, QrCode, Key } from 'lucide-react';
+import nostrichLogo from '@assets/nostrich_1754041000639.png';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
@@ -232,8 +233,12 @@ export default function Signer() {
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Signature className="text-primary-foreground h-4 w-4" />
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img 
+                  src={nostrichLogo} 
+                  alt="Nostrich" 
+                  className="w-8 h-8 object-contain filter contrast-125" 
+                />
               </div>
               <h1 className="text-xl font-semibold text-gray-900">Nostrich Signer</h1>
             </div>
