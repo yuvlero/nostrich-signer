@@ -139,7 +139,6 @@ export default function Signer() {
     if (isProcessing) return;
     
     setIsProcessing(true);
-    addActivity('scan', `QR code detected: ${data.substring(0, 50)}...`, 'info');
     
     try {
       console.log('QR Code data:', data);
@@ -151,25 +150,31 @@ export default function Signer() {
       }
 
       console.log('Parsed NWC data:', nwcData);
-      addActivity('scan', `Parsed challengeId: ${nwcData.challengeId}`, 'info');
 
       if (!keys) {
         throw new Error('No keys available for signing. Please generate or import keys first.');
       }
 
       // Create and sign event
-      addActivity('sign', 'Creating and signing event...', 'info');
       const signedEvent = createAndSignEvent(keys.privateKey, keys.publicKey, nwcData);
       
       console.log('Signed event:', signedEvent);
 
       // Publish to auth server
-      addActivity('sign', `Publishing to ${new URL(settings.serverUrl).hostname}...`, 'info');
       console.log('About to publish event:', JSON.stringify(signedEvent, null, 2));
       await publishEvent(signedEvent, settings.serverUrl);
       
-      showStatus('success', `Event signed successfully! Authentication completed and sent to ${new URL(settings.serverUrl).hostname}`);
-      addActivity('sign', 'Event signed and published successfully', 'success');
+      // Clear previous activity and add single success entry
+      const domain = new URL(settings.serverUrl).hostname;
+      setRecentActivity([{
+        id: `${Date.now()}-success`,
+        type: 'sign',
+        message: `Signed for ${domain}`,
+        timestamp: new Date(),
+        status: 'success'
+      }]);
+      
+      showStatus('success', `Event signed successfully! Authentication completed and sent to ${domain}`);
       
       toast({
         title: "Success!",
@@ -181,9 +186,7 @@ export default function Signer() {
       console.error('QR processing error:', error);
       
       // Don't close scanner for invalid QR codes - keep scanning
-      if (errorMessage.includes('Invalid QR code format')) {
-        addActivity('scan', 'Invalid QR format - continuing to scan', 'info');
-      } else {
+      if (!errorMessage.includes('Invalid QR code format')) {
         showStatus('error', `Failed to process QR code: ${errorMessage}`);
         addActivity('error', errorMessage, 'error');
         
