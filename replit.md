@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a standalone Node.js + React application that functions as a Nostr signer, designed to communicate with the Nostrich authentication server at auth.nostrich.pro. The application provides QR code scanning capabilities, private key management, and local event signing for Nostr Wallet Connect authentication.
+This is a standalone Node.js + React application that functions as a Nostr signer, designed to communicate with both production (auth.nostrich.pro) and development authentication servers. The application provides QR code scanning capabilities, private key management, and local event signing for Nostr Wallet Connect authentication. Successfully integrated with nostrich-challenger package and tested with Python-based development server.
 
 ## User Preferences
 
@@ -50,6 +50,7 @@ UI Preferences:
   - Implemented full-screen camera modal for immersive scanning experience
   - Added QR code format validation to prevent false positives
   - Camera remains open until valid Nostr/wallet connect QR code is detected
+  - Fixed NWC URI parsing to extract challenge ID from hostname (e.g., `nostr+walletconnect://challengeId?relay=...&secret=...`)
 
 #### Key Management (`KeyManagement.tsx`)
 - **Purpose**: Generate, import, export, and manage Nostr private keys
@@ -142,9 +143,10 @@ UI Preferences:
 
 ### Authentication Server Configuration
 - **Production Server**: `https://auth.nostrich.pro` (main Nostrich authentication server)
-- **Development Server**: `https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev`
+- **Development Server**: `https://64141f0c-4ac2-4e7a-9eb6-e8dc6472e05e-00-1176bbn6pnzmb.spock.replit.dev` (Python-based development server)
 - **Environment-based**: Automatically selects dev server in development mode, production server in production
 - **User Configurable**: Server URL can be overridden in application settings
+- **Integration Status**: Successfully tested with Python development server - QR parsing and event publishing working correctly
 
 ### Security Considerations
 - **Key Storage**: Private keys never leave the browser
