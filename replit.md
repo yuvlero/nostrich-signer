@@ -50,7 +50,8 @@ UI Preferences:
   - Implemented full-screen camera modal for immersive scanning experience
   - Added QR code format validation to prevent false positives
   - Camera remains open until valid Nostr/wallet connect QR code is detected
-  - Fixed NWC URI parsing to extract challenge ID from hostname (e.g., `nostr+walletconnect://challengeId?relay=...&secret=...`)
+  - Fixed NWC URI parsing to extract challenge ID from hostname and domain parameter (e.g., `nostr+walletconnect://challengeId?relay=...&secret=...&domain=example.com`)
+  - Updated activity logging to show single "Signed at <domain>" entry using domain from URI
 
 #### Key Management (`KeyManagement.tsx`)
 - **Purpose**: Generate, import, export, and manage Nostr private keys

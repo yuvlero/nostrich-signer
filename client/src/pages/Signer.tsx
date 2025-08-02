@@ -141,15 +141,11 @@ export default function Signer() {
     setIsProcessing(true);
     
     try {
-      console.log('QR Code data:', data);
-      
       // Parse NWC URI
       const nwcData = parseNWCUri(data);
       if (!nwcData) {
         throw new Error(`Invalid QR code format. Expected Nostr Wallet Connect URI, got: ${data.substring(0, 100)}`);
       }
-
-      console.log('Parsed NWC data:', nwcData);
 
       if (!keys) {
         throw new Error('No keys available for signing. Please generate or import keys first.');
@@ -157,11 +153,8 @@ export default function Signer() {
 
       // Create and sign event
       const signedEvent = createAndSignEvent(keys.privateKey, keys.publicKey, nwcData);
-      
-      console.log('Signed event:', signedEvent);
 
       // Publish to auth server
-      console.log('About to publish event:', JSON.stringify(signedEvent, null, 2));
       await publishEvent(signedEvent, settings.serverUrl);
       
       // Clear previous activity and add single success entry with domain from URI

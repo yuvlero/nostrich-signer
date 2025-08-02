@@ -88,7 +88,7 @@ export function parseNWCUri(uri: string): NWCUri | null {
       challengeId = url.pathname.replace('/', '');
     }
     
-    console.log('Parsing NWC URI:', { uri, challengeId, relay, secret, domain });
+    // Log only for debugging if needed
     
     if (!challengeId || !relay || !secret) {
       console.error('Missing required NWC parameters:', { challengeId: !!challengeId, relay: !!relay, secret: !!secret });
