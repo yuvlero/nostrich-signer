@@ -164,12 +164,12 @@ export default function Signer() {
       console.log('About to publish event:', JSON.stringify(signedEvent, null, 2));
       await publishEvent(signedEvent, settings.serverUrl);
       
-      // Clear previous activity and add single success entry
-      const domain = new URL(settings.serverUrl).hostname;
+      // Clear previous activity and add single success entry with domain from URI
+      const domain = nwcData.domain || new URL(settings.serverUrl).hostname;
       setRecentActivity([{
         id: `${Date.now()}-success`,
         type: 'sign',
-        message: `Signed for ${domain}`,
+        message: `Signed at ${domain}`,
         timestamp: new Date(),
         status: 'success'
       }]);

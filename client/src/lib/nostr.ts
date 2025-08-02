@@ -12,6 +12,7 @@ export interface NWCUri {
   challengeId: string;
   relay: string;
   secret: string;
+  domain?: string;
 }
 
 export interface NostrEvent {
@@ -76,17 +77,18 @@ export function parseNWCUri(uri: string): NWCUri | null {
     }
     
     // For nostr+walletconnect:// URIs, the challenge ID is typically the hostname
-    // and relay/secret are URL parameters
+    // and relay/secret/domain are URL parameters
     let challengeId = url.searchParams.get('challengeId') || url.hostname;
     const relay = url.searchParams.get('relay');
     const secret = url.searchParams.get('secret');
+    const domain = url.searchParams.get('domain');
     
     // Handle case where challengeId might be in pathname (remove leading slash)
     if (!challengeId || challengeId === '') {
       challengeId = url.pathname.replace('/', '');
     }
     
-    console.log('Parsing NWC URI:', { uri, challengeId, relay, secret });
+    console.log('Parsing NWC URI:', { uri, challengeId, relay, secret, domain });
     
     if (!challengeId || !relay || !secret) {
       console.error('Missing required NWC parameters:', { challengeId: !!challengeId, relay: !!relay, secret: !!secret });
@@ -96,7 +98,8 @@ export function parseNWCUri(uri: string): NWCUri | null {
     return {
       challengeId,
       relay: decodeURIComponent(relay),
-      secret
+      secret,
+      domain: domain ? decodeURIComponent(domain) : undefined
     };
   } catch (error) {
     console.error('Failed to parse NWC URI:', error);
